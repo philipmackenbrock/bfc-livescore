@@ -124,12 +124,28 @@
     .fish-card label{font-size:0.85rem; color:var(--muted)}
 
     /* Dropdown as card input */
-    .fish-card select{
-      width:100%; padding:10px 14px; border-radius:8px; border:1px solid #444; background:#2f2f38;
-      color:var(--accent); font-weight:600; font-size:1rem; appearance:none; cursor:pointer;
-      background-image:url("data:image/svg+xml;utf8,<svg fill='%239be2d4' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-      background-repeat:no-repeat; background-position:right 12px center; background-size:16px;
-    }
+   .fish-card select {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: linear-gradient(145deg, #2f2f38, #363646);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1rem;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%239be2d4' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px;
+  transition: all .25s ease;
+}
+.fish-card select:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(155,226,212,0.15);
+}
+
 
     /* Sliders */
     input[type=range]{width:100%; margin:8px 0; accent-color:var(--accent); cursor:pointer}
@@ -152,6 +168,13 @@
     .toast.error{border-left-color:#ef4444; color:#fee2e2}
     .toast.success{border-left-color:#34d399}
     @keyframes fadeInUp{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+    /* Teilnehmer-Karte separat absetzen */
+.catch-form > .fish-card {
+  margin-bottom: 20px;
+}
+
+    
   </style>
 </head>
 <body>
@@ -250,40 +273,40 @@
 
         <div class="fish-grid">
           <div class="fish-card">
-            <h3>Barsch <span class="fish-value" id="val-barsch">0 cm</span></h3>
-            <input type="range" name="barsch" min="0" max="100" value="0"
-              oninput="document.getElementById('val-barsch').textContent=this.value+' cm'">
-            <label><input type="checkbox" name="barschBoot"> vom Hausboot</label>
-          </div>
+  <h3>Barsch <span class="fish-value" id="val-barsch">22 cm</span></h3>
+  <input type="range" name="barsch" min="22" max="100" value="22"
+    oninput="document.getElementById('val-barsch').textContent=this.value+' cm'">
+  <label><input type="checkbox" name="barschBoot"> vom Hausboot</label>
+</div>
 
-          <div class="fish-card">
-            <h3>Zander <span class="fish-value" id="val-zander">0 cm</span></h3>
-            <input type="range" name="zander" min="0" max="120" value="0"
-              oninput="document.getElementById('val-zander').textContent=this.value+' cm'">
-            <label><input type="checkbox" name="zanderBoot"> vom Hausboot</label>
-          </div>
+<div class="fish-card">
+  <h3>Zander <span class="fish-value" id="val-zander">42 cm</span></h3>
+  <input type="range" name="zander" min="42" max="120" value="42"
+    oninput="document.getElementById('val-zander').textContent=this.value+' cm'">
+  <label><input type="checkbox" name="zanderBoot"> vom Hausboot</label>
+</div>
 
-          <div class="fish-card">
-            <h3>Hecht <span class="fish-value" id="val-hecht">0 cm</span></h3>
-            <input type="range" name="hecht" min="0" max="150" value="0"
-              oninput="document.getElementById('val-hecht').textContent=this.value+' cm'">
-            <label><input type="checkbox" name="hechtBoot"> vom Hausboot</label>
-          </div>
+<div class="fish-card">
+  <h3>Hecht <span class="fish-value" id="val-hecht">45 cm</span></h3>
+  <input type="range" name="hecht" min="45" max="150" value="45"
+    oninput="document.getElementById('val-hecht').textContent=this.value+' cm'">
+  <label><input type="checkbox" name="hechtBoot"> vom Hausboot</label>
+</div>
 
-          <div class="fish-card">
-            <h3>Rapfen <span class="fish-value" id="val-rapfen">0 cm</span></h3>
-            <input type="range" name="rapfen" min="0" max="100" value="0"
-              oninput="document.getElementById('val-rapfen').textContent=this.value+' cm'">
-            <label><input type="checkbox" name="rapfenBoot"> vom Hausboot</label>
-          </div>
+<div class="fish-card">
+  <h3>Rapfen <span class="fish-value" id="val-rapfen">40 cm</span></h3>
+  <input type="range" name="rapfen" min="40" max="100" value="40"
+    oninput="document.getElementById('val-rapfen').textContent=this.value+' cm'">
+  <label><input type="checkbox" name="rapfenBoot"> vom Hausboot</label>
+</div>
 
-          <div class="fish-card">
-            <h3>Wels <span class="fish-value" id="val-wels">0 cm</span></h3>
-            <input type="range" name="wels" min="0" max="200" value="0"
-              oninput="document.getElementById('val-wels').textContent=this.value+' cm'">
-            <label><input type="checkbox" name="welsBoot"> vom Hausboot</label>
-          </div>
-        </div>
+<div class="fish-card">
+  <h3>Wels <span class="fish-value" id="val-wels">50 cm</span></h3>
+  <input type="range" name="wels" min="50" max="200" value="50"
+    oninput="document.getElementById('val-wels').textContent=this.value+' cm'">
+  <label><input type="checkbox" name="welsBoot"> vom Hausboot</label>
+</div>
+
 
         <button type="submit" class="submit-btn">Absenden</button>
       </form>
@@ -535,9 +558,14 @@ document.getElementById('catchForm').addEventListener('submit', async (e)=>{
   const data = new FormData(e.target);
   const obj = Object.fromEntries(data.entries());
 
-  // Don't send zero values (sliders default to 0)
+  // Slider-Werte auf "" setzen, wenn 0
   ['barsch','zander','hecht','rapfen','wels'].forEach(k=>{
     if(obj[k] === '0') obj[k] = '';
+  });
+
+  // Checkbox-Werte auf "true"/"" mappen
+  ['barschBoot','zanderBoot','hechtBoot','rapfenBoot','welsBoot'].forEach(k=>{
+    obj[k] = obj[k] ? "true" : "";
   });
 
   try{
@@ -549,7 +577,6 @@ document.getElementById('catchForm').addEventListener('submit', async (e)=>{
     const msg = await res.text();
     showToast(msg || 'Erfolgreich eingetragen', 'success');
 
-    // Reset form + slider labels
     e.target.reset();
     document.querySelectorAll(".fish-value").forEach(el => el.textContent = "0 cm");
   }catch(err){
@@ -557,6 +584,7 @@ document.getElementById('catchForm').addEventListener('submit', async (e)=>{
     showToast('Fehler beim Senden der Daten', 'error');
   }
 });
+
 </script>
 </body>
 </html>
