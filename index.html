@@ -541,7 +541,7 @@ document.getElementById('catchForm').addEventListener('submit', async (e)=>{
   const obj = Object.fromEntries(data.entries());
 
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbywxlRKAjhjWiXSwTi9pklLY9VD9F3taVHfBE-jlo6Ro6v3yRboz8wCrq5e0MyrIr1L/exec", {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbyywgmeb_ktsrW6fWN5LAQWcOLzOScwaQ9QPkdOxEmUkKyUUbtjEOQxDQuiQGCLfv3L/exec", {
       method: "POST",
       body: JSON.stringify(obj),
       headers: { "Content-Type": "application/json" }
