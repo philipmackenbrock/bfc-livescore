@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!doctype html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;Live Ranking&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>body { font-family: Inter, system-ui, sans-serif; background:#f7fafc; color:#111; padding:20px; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.leaderboard { max-width:1000px; margin:0 auto; background:#fff; border-radius:12px; padding:18px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>h2 { margin:0 0 12px 0; font-weight:600; font-size:1.3rem; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>table { width:100%; border-collapse:collapse; table-layout:fixed; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>thead th { padding:10px; text-align:left; font-weight:700; color:#555; border-bottom:1px solid #eee; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>tbody td { padding:10px; border-bottom:1px solid #f0f0f0; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.pos { width:50px; text-align:center; font-weight:700; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.score { text-align:right; font-weight:700; width:100px; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>tbody tr { transition: all 0.6s ease; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.rank-up { background: linear-gradient(90deg, rgba(224,255,230,0.6), transparent); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.rank-down { background: linear-gradient(90deg, rgba(255,230,230,0.6), transparent); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.top1 { background: linear-gradient(90deg, rgba(255,215,0,0.08), transparent); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.top2 { background: linear-gradient(90deg, rgba(192,192,192,0.06), transparent); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.top3 { background: linear-gradient(90deg, rgba(205,127,50,0.06), transparent); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>@media(max-width:760px){ thead th, tbody td { padding:6px; font-size:0.85rem; } .pos{width:36px} .score{width:70px} }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="leaderboard"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;h2&gt;Live Ranking&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;table id="board"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;thead&gt;&lt;tr id="headerRow"&gt;&lt;/tr&gt;&lt;/thead&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;tbody&gt;&lt;/tbody&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/table&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;script&gt;</span></p>
+<p class="p1"><span class="s1">const SHEET_ID = "1H7pI6CWOnP6QedIxfdFLRO_8DkswdLTc7v5rSu0TvNA";</span></p>
+<p class="p1"><span class="s1">const API_KEY<span class="Apple-converted-space">  </span>= "AIzaSyBGFkhdQZ3le5u_dI-fsmDMoD1VMPkQXEE";</span></p>
+<p class="p1"><span class="s1">const RANGE<span class="Apple-converted-space">    </span>= "Live!B1:K100"; // Names in B, Values in C–J, Total in K</span></p>
+<p class="p1"><span class="s1">const URL<span class="Apple-converted-space">      </span>= `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(RANGE)}?key=${API_KEY}`;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">let previousRanks = {};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">// fetch JSON from Sheets</span></p>
+<p class="p1"><span class="s1">async function fetchSheet(){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const res = await fetch(URL, {cache:"no-store"});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if(!res.ok) throw new Error("Failed to fetch");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const data = await res.json();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return data.values || [];</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function render(values){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if(values.length &lt; 2) return;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const header = values[0]; // row 1</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const rows = values.slice(1).filter(r =&gt; r[0]); // competitors start at B2</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// sort by Total (last col = index 9 since B=0, C=1,...K=9)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>rows.sort((a,b) =&gt; Number(b[9]||0) - Number(a[9]||0));</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// build header row</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const headerRow = document.getElementById('headerRow');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>headerRow.innerHTML = `&lt;th class="pos"&gt;#&lt;/th&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>header.forEach((h, i) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const cls = (i===0) ? "competitor" : (i===9 ? "score" : "");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>headerRow.innerHTML += `&lt;th class="${cls}"&gt;${h}&lt;/th&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const tbody = document.querySelector('#board tbody');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>tbody.innerHTML = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const newRanks = {};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>rows.forEach((row, idx) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const pos = idx+1;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const tr = document.createElement('tr');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const id = row[0]; // competitor name</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const oldPos = previousRanks[id];</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(oldPos !== undefined){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if(oldPos &gt; pos) tr.classList.add('rank-up');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>else if(oldPos &lt; pos) tr.classList.add('rank-down');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(pos===1) tr.classList.add('top1');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(pos===2) tr.classList.add('top2');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(pos===3) tr.classList.add('top3');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>newRanks[id] = pos;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let html = `&lt;td class="pos"&gt;${pos}&lt;/td&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>row.forEach((val, i) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const cls = (i===0) ? "competitor" : (i===9 ? "score" : "");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>html += `&lt;td class="${cls}"&gt;${val || ''}&lt;/td&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>tr.innerHTML = html;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>tbody.appendChild(tr);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>previousRanks = newRanks;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">async function refresh(){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>try {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const values = await fetchSheet();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>render(values);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} catch(err){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>console.error(err);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">// initial load + auto refresh</span></p>
+<p class="p1"><span class="s1">refresh();</span></p>
+<p class="p1"><span class="s1">setInterval(refresh, 8000);</span></p>
+<p class="p1"><span class="s1">&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
