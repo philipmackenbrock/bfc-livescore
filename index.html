@@ -173,7 +173,13 @@
 .catch-form > .fish-card {
   margin-bottom: 20px;
 }
+    /* Teilnehmer-Karte extra absetzen */
+.participant-card {
+  margin-bottom: 24px;
+}
 
+
+  
     
   </style>
 </head>
@@ -222,6 +228,7 @@
           <p><strong>Hausboot-Bonus:</strong></p>
           <ul>
             <li>Vom Hausboot gefangene Fische erhalten ×1.2</li>
+            <li>Beim Ansitzangeln (inaktiv) gefangene Fische erhalten keinen Hausboot Bonus </li>
             <li>Mindestens einer der 8 zählenden Fische muss vom Hausboot gefangen sein</li>
             <li>Fehlt ein Hausboot-Fisch, bleibt das 8. Feld leer</li>
           </ul>
@@ -259,59 +266,67 @@
 
     <!-- Catch Form -->
     <div class="catch-form">
-      <h2>Fänge eintragen</h2>
-      <form id="catchForm">
-        <div class="fish-card">
-          <h3>Teilnehmer</h3>
-          <select name="name" required>
-            <option value="">Bitte wählen…</option>
-            <option value="Arne">Arne</option>
-            <option value="Tobi">Tobi</option>
-            <option value="Philip">Philip</option>
-          </select>
-        </div>
-
-        <div class="fish-grid">
-          <div class="fish-card">
-  <h3>Barsch <span class="fish-value" id="val-barsch">22 cm</span></h3>
-  <input type="range" name="barsch" min="22" max="100" value="22"
-    oninput="document.getElementById('val-barsch').textContent=this.value+' cm'">
-  <label><input type="checkbox" name="barschBoot"> vom Hausboot</label>
-</div>
-
-<div class="fish-card">
-  <h3>Zander <span class="fish-value" id="val-zander">42 cm</span></h3>
-  <input type="range" name="zander" min="42" max="120" value="42"
-    oninput="document.getElementById('val-zander').textContent=this.value+' cm'">
-  <label><input type="checkbox" name="zanderBoot"> vom Hausboot</label>
-</div>
-
-<div class="fish-card">
-  <h3>Hecht <span class="fish-value" id="val-hecht">45 cm</span></h3>
-  <input type="range" name="hecht" min="45" max="150" value="45"
-    oninput="document.getElementById('val-hecht').textContent=this.value+' cm'">
-  <label><input type="checkbox" name="hechtBoot"> vom Hausboot</label>
-</div>
-
-<div class="fish-card">
-  <h3>Rapfen <span class="fish-value" id="val-rapfen">40 cm</span></h3>
-  <input type="range" name="rapfen" min="40" max="100" value="40"
-    oninput="document.getElementById('val-rapfen').textContent=this.value+' cm'">
-  <label><input type="checkbox" name="rapfenBoot"> vom Hausboot</label>
-</div>
-
-<div class="fish-card">
-  <h3>Wels <span class="fish-value" id="val-wels">50 cm</span></h3>
-  <input type="range" name="wels" min="50" max="200" value="50"
-    oninput="document.getElementById('val-wels').textContent=this.value+' cm'">
-  <label><input type="checkbox" name="welsBoot"> vom Hausboot</label>
-</div>
-
-
-        <button type="submit" class="submit-btn">Absenden</button>
-      </form>
+  <h2>Fänge eintragen</h2>
+  <form id="catchForm">
+    
+    <!-- Teilnehmer-Auswahl (NICHT in fish-grid!) -->
+    <div class="fish-card participant-card">
+      <h3>Teilnehmer</h3>
+      <select name="name" required>
+        <option value="">Bitte wählen…</option>
+        <option value="Arne">Arne</option>
+        <option value="Tobi">Tobi</option>
+        <option value="Philip">Philip</option>
+      </select>
     </div>
-  </div>
+
+    <!-- Fischarten (Grid) -->
+    <div class="fish-grid">
+      <!-- Barsch -->
+      <div class="fish-card">
+        <h3>Barsch <span class="fish-value" id="val-barsch">22 cm</span></h3>
+        <input type="range" name="barsch" min="22" max="100" value="22"
+          oninput="document.getElementById('val-barsch').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="barschBoot"> vom Hausboot</label>
+      </div>
+
+      <!-- Zander -->
+      <div class="fish-card">
+        <h3>Zander <span class="fish-value" id="val-zander">42 cm</span></h3>
+        <input type="range" name="zander" min="42" max="120" value="42"
+          oninput="document.getElementById('val-zander').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="zanderBoot"> vom Hausboot</label>
+      </div>
+
+      <!-- Hecht -->
+      <div class="fish-card">
+        <h3>Hecht <span class="fish-value" id="val-hecht">45 cm</span></h3>
+        <input type="range" name="hecht" min="45" max="150" value="45"
+          oninput="document.getElementById('val-hecht').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="hechtBoot"> vom Hausboot</label>
+      </div>
+
+      <!-- Rapfen -->
+      <div class="fish-card">
+        <h3>Rapfen <span class="fish-value" id="val-rapfen">40 cm</span></h3>
+        <input type="range" name="rapfen" min="40" max="100" value="40"
+          oninput="document.getElementById('val-rapfen').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="rapfenBoot"> vom Hausboot</label>
+      </div>
+
+      <!-- Wels -->
+      <div class="fish-card">
+        <h3>Wels <span class="fish-value" id="val-wels">50 cm</span></h3>
+        <input type="range" name="wels" min="50" max="200" value="50"
+          oninput="document.getElementById('val-wels').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="welsBoot"> vom Hausboot</label>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Absenden</button>
+  </form>
+</div>
+
 
   <!-- Toast container -->
   <div id="toast"></div>
