@@ -9,12 +9,13 @@
   <link rel="icon" href="Favicon dark.png" type="image/png">
 
   <style>
-    :root {
+   :root {
   --bg: #292830;         
-  --card: #3a3a44;       /* tuned lighter shade for the card */
+  --card: #3a3a44;       
   --muted: #cbf1e4;      
-  --accent: #9be2d4;     
-  --accent-2: #c2c2c2;   /* secondary color for values */
+  --accent: #9be2d4;        /* primary accent */
+  --accent-light: #b5ece1;  /* lighter variant for headers */
+  --accent-2: #c2c2c2;      /* secondary (values) */
   --good: rgba(117,234,234,0.25);  
   --bad: rgba(239,68,68,0.25);     
 }
@@ -82,12 +83,13 @@
     }
 
     thead th {
-      text-align: left;
-      padding: 12px 10px;
-      font-weight: 700;
-      color: var(--muted);
-      border-bottom: 1px solid #444;
-    }
+  text-align: left;
+  padding: 12px 10px;
+  font-weight: 700;
+  color: var(--accent-light); /* use lighter highlight */
+  border-bottom: 1px solid #444;
+}
+
 
     tbody td {
       padding: 10px;
