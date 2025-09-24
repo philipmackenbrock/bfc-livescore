@@ -228,6 +228,17 @@
     }
 
     .note { margin-top: 8px; font-size: 0.88rem; color: var(--muted); text-align: right; }
+  
+    /* Scrollbare Tabelle auf Mobile */
+@media (max-width: 640px) {
+  .leaderboard {
+    overflow-x: auto;
+  }
+  table {
+    min-width: 900px; /* verhindert gequetschte Spalten */
+  }
+}
+
   </style>
 </head>
 <body>
