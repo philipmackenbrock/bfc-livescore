@@ -56,6 +56,61 @@
 .rules-toggle:hover {
   background: #40404a;
 }
+.records {
+  margin-top: 28px;
+}
+
+.records h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.record-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.record-card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.25s ease;
+}
+.record-card:hover {
+  transform: translateY(-4px);
+}
+
+.fish-icon {
+  width: 60px;
+  height: auto;
+  margin-right: 14px;
+  filter: brightness(0) saturate(100%) invert(86%) sepia(18%) saturate(500%) hue-rotate(120deg) brightness(95%);
+  /* sorgt dafür, dass dein PNG in der Primary-Farbe (#9be2d4) erscheint */
+}
+
+.record-info h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.record-info .length {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-left: 4px;
+  color: var(--accent-light);
+}
+.record-info p {
+  margin: 2px 0 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
 
 .rules-content {
   max-height: 0;
@@ -225,6 +280,33 @@
 
     </div>
   </div>
+
+<div class="records">
+  <h2>Rekordfische</h2>
+  <div class="record-grid">
+    <div class="record-card">
+      <img src="barsch.png" alt="Barsch" class="fish-icon">
+      <div class="record-info">
+        <h3>Barsch <span class="length">42 cm</span></h3>
+        <p>2024 · Philip</p>
+      </div>
+    </div>
+    <div class="record-card">
+      <img src="zander.png" alt="Zander" class="fish-icon">
+      <div class="record-info">
+        <h3>Zander <span class="length">83 cm</span></h3>
+        <p>2024 · Arne</p>
+      </div>
+    </div>
+    <div class="record-card">
+      <img src="hecht.png" alt="Hecht" class="fish-icon">
+      <div class="record-info">
+        <h3>Hecht <span class="length">83 cm</span></h3>
+        <p>2024 · Tobi</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ====== CONFIG ====== */
