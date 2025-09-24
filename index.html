@@ -178,13 +178,23 @@
   background: #2f2f38;
   color: var(--accent-2);
 }
+
 .catch-form select {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 6px;
+  width: 250px;             /* feste Breite statt Vollbild */
+  padding: 10px 14px;
+  border-radius: 8px;
   border: 1px solid #444;
   background: #2f2f38;
-  color: var(--accent-2);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1rem;
+  appearance: none;          /* entfernt Standard-Pfeil */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%239be2d4' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
 }
 
 .fish-grid {
@@ -322,6 +332,21 @@
   }
 }
 
+/* Slider-Styling */
+input[type=range] {
+  width: 100%;
+  margin: 12px 0;
+  accent-color: var(--accent); /* moderne Browser */
+  cursor: pointer;
+}
+
+.fish-value {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent);
+  margin-left: 6px;
+}
+
   </style>
 </head>
 <body>
@@ -415,40 +440,41 @@
       </select>
     </label>
 
-    <div class="fish-grid">
-      <div class="fish-card">
-        <h3>Barsch</h3>
-        <input type="number" name="barsch" placeholder="Länge in cm">
-        <label><input type="checkbox" name="barschBoot"> vom Hausboot</label>
-      </div>
+<div class="fish-grid">
+  <div class="fish-card">
+    <h3>Barsch <span class="fish-value" id="val-barsch">0 cm</span></h3>
+    <input type="range" name="barsch" min="0" max="100" value="0"
+           oninput="document.getElementById('val-barsch').textContent=this.value+' cm'">
+    <label><input type="checkbox" name="barschBoot"> vom Hausboot</label>
+  </div>
 
-      <div class="fish-card">
-        <h3>Zander</h3>
-        <input type="number" name="zander" placeholder="Länge in cm">
-        <label><input type="checkbox" name="zanderBoot"> vom Hausboot</label>
-      </div>
+  <div class="fish-card">
+    <h3>Zander <span class="fish-value" id="val-zander">0 cm</span></h3>
+    <input type="range" name="zander" min="0" max="120" value="0"
+           oninput="document.getElementById('val-zander').textContent=this.value+' cm'">
+    <label><input type="checkbox" name="zanderBoot"> vom Hausboot</label>
+  </div>
 
-      <div class="fish-card">
-        <h3>Hecht</h3>
-        <input type="number" name="hecht" placeholder="Länge in cm">
-        <label><input type="checkbox" name="hechtBoot"> vom Hausboot</label>
-      </div>
+  <div class="fish-card">
+    <h3>Hecht <span class="fish-value" id="val-hecht">0 cm</span></h3>
+    <input type="range" name="hecht" min="0" max="150" value="0"
+           oninput="document.getElementById('val-hecht').textContent=this.value+' cm'">
+    <label><input type="checkbox" name="hechtBoot"> vom Hausboot</label>
+  </div>
 
-      <div class="fish-card">
-        <h3>Rapfen</h3>
-        <input type="number" name="rapfen" placeholder="Länge in cm">
-        <label><input type="checkbox" name="rapfenBoot"> vom Hausboot</label>
-      </div>
+  <div class="fish-card">
+    <h3>Rapfen <span class="fish-value" id="val-rapfen">0 cm</span></h3>
+    <input type="range" name="rapfen" min="0" max="100" value="0"
+           oninput="document.getElementById('val-rapfen').textContent=this.value+' cm'">
+    <label><input type="checkbox" name="rapfenBoot"> vom Hausboot</label>
+  </div>
 
-      <div class="fish-card">
-        <h3>Wels</h3>
-        <input type="number" name="wels" placeholder="Länge in cm">
-        <label><input type="checkbox" name="welsBoot"> vom Hausboot</label>
-      </div>
-    </div>
-
-    <button type="submit" class="submit-btn">Absenden</button>
-  </form>
+  <div class="fish-card">
+    <h3>Wels <span class="fish-value" id="val-wels">0 cm</span></h3>
+    <input type="range" name="wels" min="0" max="200" value="0"
+           oninput="document.getElementById('val-wels').textContent=this.value+' cm'">
+    <label><input type="checkbox" name="welsBoot"> vom Hausboot</label>
+  </div>
 </div>
 
 <script>
@@ -541,14 +567,14 @@ document.getElementById('catchForm').addEventListener('submit', async (e)=>{
   const obj = Object.fromEntries(data.entries());
 
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbyywgmeb_ktsrW6fWN5LAQWcOLzOScwaQ9QPkdOxEmUkKyUUbtjEOQxDQuiQGCLfv3L/exec", {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxke3u90ayDokvxj5Da3SnMPpTuipfHAM2sOvIGMLr85XBw_hd9GYbj2evG6U-tyzTAag/exec", {
       method: "POST",
       body: JSON.stringify(obj),
       headers: { "Content-Type": "application/json" }
     });
     const msg = await res.text();
     alert("Antwort: " + msg);
-    e.target.reset(); // Formular leeren
+    e.target.reset(); // Formular leeren nach Absenden
   } catch (err) {
     console.error(err);
     alert("Fehler beim Senden der Daten!");
