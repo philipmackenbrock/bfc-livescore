@@ -178,6 +178,14 @@
   background: #2f2f38;
   color: var(--accent-2);
 }
+.catch-form select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2f2f38;
+  color: var(--accent-2);
+}
 
 .fish-grid {
   display: grid;
@@ -399,7 +407,12 @@
   <form id="catchForm">
     <label class="field">
       <span>Teilnehmer</span>
-      <input type="text" name="name" required placeholder="Name">
+      <select name="name" required>
+        <option value="">Bitte wählen…</option>
+        <option value="Arne">Arne</option>
+        <option value="Tobi">Tobi</option>
+        <option value="Philip">Philip</option>
+      </select>
     </label>
 
     <div class="fish-grid">
@@ -534,7 +547,7 @@ document.getElementById('catchForm').addEventListener('submit', async (e)=>{
       headers: { "Content-Type": "application/json" }
     });
     const msg = await res.text();
-    alert("Antwort vom Server: " + msg);
+    alert("Antwort: " + msg);
     e.target.reset(); // Formular leeren
   } catch (err) {
     console.error(err);
