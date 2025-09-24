@@ -145,6 +145,81 @@
   font-weight: 700;
 }
 
+.catch-form {
+  margin-top: 40px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+
+.catch-form h2 {
+  margin-top: 0;
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+.catch-form .field {
+  display: block;
+  margin-bottom: 16px;
+}
+.catch-form .field span {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--accent-light);
+}
+.catch-form input[type="text"],
+.catch-form input[type="number"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2f2f38;
+  color: var(--accent-2);
+}
+
+.fish-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.fish-card {
+  background: #2f2f38;
+  border-radius: 8px;
+  padding: 12px;
+}
+.fish-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: var(--accent);
+  font-size: 1rem;
+}
+.fish-card input[type="number"] {
+  margin-bottom: 6px;
+}
+.fish-card label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.submit-btn {
+  background: var(--accent);
+  color: #292830;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.submit-btn:hover {
+  background: var(--accent-light);
+}
+
     .banner {
   max-width: 100%;
   display: block;
@@ -319,6 +394,50 @@
   </div>
 </div>
 
+<div class="catch-form">
+  <h2>Fänge eintragen</h2>
+  <form id="catchForm">
+    <label class="field">
+      <span>Teilnehmer</span>
+      <input type="text" name="name" required placeholder="Name">
+    </label>
+
+    <div class="fish-grid">
+      <div class="fish-card">
+        <h3>Barsch</h3>
+        <input type="number" name="barsch" placeholder="Länge in cm">
+        <label><input type="checkbox" name="barschBoot"> vom Hausboot</label>
+      </div>
+
+      <div class="fish-card">
+        <h3>Zander</h3>
+        <input type="number" name="zander" placeholder="Länge in cm">
+        <label><input type="checkbox" name="zanderBoot"> vom Hausboot</label>
+      </div>
+
+      <div class="fish-card">
+        <h3>Hecht</h3>
+        <input type="number" name="hecht" placeholder="Länge in cm">
+        <label><input type="checkbox" name="hechtBoot"> vom Hausboot</label>
+      </div>
+
+      <div class="fish-card">
+        <h3>Rapfen</h3>
+        <input type="number" name="rapfen" placeholder="Länge in cm">
+        <label><input type="checkbox" name="rapfenBoot"> vom Hausboot</label>
+      </div>
+
+      <div class="fish-card">
+        <h3>Wels</h3>
+        <input type="number" name="wels" placeholder="Länge in cm">
+        <label><input type="checkbox" name="welsBoot"> vom Hausboot</label>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Absenden</button>
+  </form>
+</div>
+
 <script>
 /* ====== CONFIG ====== */
 const SHEET_ID = "1H7pI6CWOnP6QedIxfdFLRO_8DkswdLTc7v5rSu0TvNA";
@@ -402,7 +521,27 @@ function toggleRules(){
   const content = document.getElementById('rulesContent');
   content.classList.toggle('open');
 }
-  
+
+document.getElementById('catchForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const data = new FormData(e.target);
+  const obj = Object.fromEntries(data.entries());
+
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbywxlRKAjhjWiXSwTi9pklLY9VD9F3taVHfBE-jlo6Ro6v3yRboz8wCrq5e0MyrIr1L/exec", {
+      method: "POST",
+      body: JSON.stringify(obj),
+      headers: { "Content-Type": "application/json" }
+    });
+    const msg = await res.text();
+    alert("Antwort vom Server: " + msg);
+    e.target.reset(); // Formular leeren
+  } catch (err) {
+    console.error(err);
+    alert("Fehler beim Senden der Daten!");
+  }
+});
+
 </script>
 </body>
 </html>
