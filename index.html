@@ -10,14 +10,20 @@
 
   <style>
     :root {
-      --bg: #292830;         /* background */
-      --card: #34333d;       /* card background, slightly lighter */
-      --muted: #cbf1e4;      /* muted text */
-      --accent: #9be2d4;     /* primary accent */
-      --accent-2: #c2c2c2;   /* secondary text/headings */
-      --good: rgba(117,234,234,0.25);  /* rank-up highlight */
-      --bad: rgba(239,68,68,0.25);     /* rank-down highlight */
-    }
+  --bg: #292830;         
+  --card: #3a3a44;       /* tuned lighter shade for the card */
+  --muted: #cbf1e4;      
+  --accent: #9be2d4;     
+  --accent-2: #c2c2c2;   /* secondary color for values */
+  --good: rgba(117,234,234,0.25);  
+  --bad: rgba(239,68,68,0.25);     
+}
+
+.value {
+  text-align: center;
+  color: var(--accent-2);
+}
+
 
     body {
       font-family: Inter, system-ui, sans-serif;
@@ -134,7 +140,6 @@
         <tbody></tbody>
       </table>
 
-      <div class="note">Datenquelle: Google Sheets (Live). Aktualisiert automatisch.</div>
     </div>
   </div>
 
