@@ -576,10 +576,13 @@ function toggleRules(){
 refresh();
 setInterval(refresh, POLL_MS);
 
-document.getElementById('catchForm').addEventListener('submit', async (e)=>{
+/* catch form header */
+document.getElementById('catchForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const data = new FormData(e.target);
   const obj = Object.fromEntries(data.entries());
+
+  console.log("📦 Sende folgende Daten:", obj); // Debug-Ausgabe
 
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbxke3u90ayDokvxj5Da3SnMPpTuipfHAM2sOvIGMLr85XBw_hd9GYbj2evG6U-tyzTAag/exec", {
@@ -587,15 +590,20 @@ document.getElementById('catchForm').addEventListener('submit', async (e)=>{
       body: JSON.stringify(obj),
       headers: { "Content-Type": "application/json" }
     });
+
+    console.log("✅ Response-Status:", res.status);
     const msg = await res.text();
-    showToast(msg || 'Erfolgreich eingetragen', 'success');
+    console.log("✅ Response-Text:", msg);
+
+    showToast(msg || "Erfolgreich eingetragen", "success");
     e.target.reset();
-  } catch(err) {
-    console.error(err);
-    showToast('Fehler beim Senden der Daten', 'error');
+  } catch (err) {
+    console.error("❌ Fehler beim Senden:", err);
+    showToast("Fehler beim Senden der Daten", "error");
   }
 });
 
+/* Toast header */
 function showToast(message, type="success") {
   const container = document.getElementById("toast-container");
   const toast = document.createElement("div");
