@@ -113,7 +113,46 @@
     .record-info .length{font-weight:700; font-size:1.05rem; margin-left:4px; color:var(--accent-light)}
     .record-info p{margin:2px 0 0 0; font-size:0.85rem; color:var(--muted)}
 
-  
+  .catch-form {
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.fish-card {
+  background: #2f2f38;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.fish-card select,
+.fish-card input[type=number] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #2f2f38;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.fish-card input[type=range] {
+  width: 100%;
+  margin-top: 8px;
+  accent-color: var(--accent);
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
   
     
   </style>
@@ -199,6 +238,51 @@
       </div>
     </div>
 
+<div class="catch-form">
+  <h2>Fischfang eintragen</h2>
+  <form id="catchForm">
+
+    <!-- Teilnehmer -->
+    <div class="fish-card">
+      <h3>Teilnehmer</h3>
+      <select name="name" required>
+        <option value="">Bitte wählen…</option>
+        <option value="Arne">Arne</option>
+        <option value="Tobi">Tobi</option>
+        <option value="Philip">Philip</option>
+      </select>
+    </div>
+
+    <!-- Fischart -->
+    <div class="fish-card">
+      <h3>Fischart</h3>
+      <select name="fish" required>
+        <option value="">Bitte wählen…</option>
+        <option value="barsch">Barsch</option>
+        <option value="zander">Zander</option>
+        <option value="hecht">Hecht</option>
+        <option value="rapfen">Rapfen</option>
+        <option value="wels">Wels</option>
+      </select>
+    </div>
+
+    <!-- Länge -->
+    <div class="fish-card">
+      <h3>Länge</h3>
+      <input type="number" name="length" placeholder="cm" min="20" max="200">
+      <input type="range" min="20" max="200" value="0"
+             oninput="this.previousElementSibling.value=this.value">
+    </div>
+
+    <!-- Hausboot -->
+    <div class="fish-card">
+      <label><input type="checkbox" name="hausboot"> vom Hausboot</label>
+    </div>
+
+    <!-- Absenden -->
+    <button type="submit" class="submit-btn">Absenden</button>
+  </form>
+</div>
 
 
 <script>
@@ -437,6 +521,25 @@ function toggleRules(){
 refresh();
 setInterval(refresh, POLL_MS);
 
+document.getElementById('catchForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const data = new FormData(e.target);
+  const obj = Object.fromEntries(data.entries());
+
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxke3u90ayDokvxj5Da3SnMPpTuipfHAM2sOvIGMLr85XBw_hd9GYbj2evG6U-tyzTAag/exec", {
+      method: "POST",
+      body: JSON.stringify(obj),
+      headers: { "Content-Type": "application/json" }
+    });
+    const msg = await res.text();
+    showToast(msg || 'Erfolgreich eingetragen', 'success');
+    e.target.reset();
+  } catch(err) {
+    console.error(err);
+    showToast('Fehler beim Senden der Daten', 'error');
+  }
+});
 
 
 </script>
