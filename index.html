@@ -621,8 +621,9 @@ function showToast(message, type="success") {
   }, 3000);
 }
 
-  
+
 </script>
+
 <script>
 async function sendFishData(obj) {
   try {
@@ -630,6 +631,7 @@ async function sendFishData(obj) {
 
     const res = await fetch("https://script.google.com/macros/s/AKfycbzYLq5Ba9-nZcAC0c7cpM-fMdsM4CzYUm1JazKLtKTwSyx5DvOgilT8tatqilfKaIH6Sg/exec", {
       method: "POST",
+      mode: "cors", // wichtig für Browser
       body: JSON.stringify(obj),
       headers: { "Content-Type": "application/json" }
     });
@@ -637,14 +639,14 @@ async function sendFishData(obj) {
     const text = await res.text();
     console.log("✅ Antwort vom Script:", text);
 
-    showToast(text); // im Toast anzeigen
+    showToast(text); // Ergebnis im Toast anzeigen
   } catch (err) {
     console.error("❌ Fehler beim Senden:", err);
     showToast("❌ Fehler beim Senden");
   }
 }
 
-// Toast-Anzeige
+// Toast-Anzeige (unten mittig)
 function showToast(msg) {
   let toast = document.createElement("div");
   toast.textContent = msg;
@@ -668,6 +670,7 @@ function showToast(msg) {
   }, 2500);
 }
 </script>
+
 
    <div id="toast-container"></div>
 
