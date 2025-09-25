@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live Ranking</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="Favicon dark.png" type="image/png">
+
+  <style>
+    :root{
+      --bg:#292830;          /* page background */
+      --card:#3a3a44;        /* cards */
+      --muted:#cbf1e4;       /* muted text */
+      --accent:#9be2d4;      /* primary accent */
+      --accent-light:#b5ece1;/* lighter accent for header cells */
+      --accent-2:#c2c2c2;    /* secondary (values) */
+      --good:rgba(117,234,234,0.25);  /* rank-up tint */
+      --bad: rgba(239,68,68,0.25);    /* rank-down tint */
+      --shadow:0 6px 20px rgba(0,0,0,0.4);
+    }
+
+    /* Base */
+    html,body{height:100%}
+    body{
+      margin:0; padding:0;
+      background:var(--bg); color:var(--accent);
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .container{max-width:1100px; margin:0 auto; padding:20px;}
+    .banner{max-width:100%; display:block; margin:0 auto 20px auto; border-radius:8px;}
+
+    /* Card widths aligned */
+    .leaderboard, .records, .catch-form{max-width:900px; margin:0 auto;}
+    .leaderboard{
+      background:var(--card); border-radius:12px; padding:18px; box-shadow:var(--shadow);
+      overflow-x:auto; /* safe scroll if needed on mid-widths */
+    }
+
+    header.top{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;}
+    h1{margin:0; font-size:1.25rem; font-weight:600; color:#e8f7f3;}
+    .meta{color:var(--muted); font-size:0.9rem}
+    #error{display:none; color:#ef4444; margin:8px 0; font-size:0.95rem}
+
+    /* Table */
+    table{width:100%; border-collapse:collapse; table-layout:fixed; font-size:0.95rem; min-width:720px;}
+    thead th{
+      text-align:left; padding:12px 10px; font-weight:700;
+      color:var(--accent-light); border-bottom:1px solid #444;
+    }
+    tbody td{
+      padding:10px; border-bottom:1px solid #555; vertical-align:middle;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+    .pos{width:56px; text-align:center; font-weight:700;}
+    .competitor{min-width:160px; font-weight:600; color:var(--accent)}
+    .value{text-align:center; color:var(--accent-2)}
+    .score{text-align:right; font-weight:700; width:110px; color:var(--accent)}
+    tbody tr{transition:box-shadow .35s ease;}
+    tbody tr.rank-up{box-shadow:inset 6px 0 0 var(--good)}
+    tbody tr.rank-down{box-shadow:inset 6px 0 0 var(--bad)}
+    tbody tr.top1{background:linear-gradient(90deg, rgba(255,215,0,0.06), transparent)}
+    tbody tr.top2{background:linear-gradient(90deg, rgba(192,192,192,0.05), transparent)}
+    tbody tr.top3{background:linear-gradient(90deg, rgba(205,127,50,0.05), transparent)}
+    /* Keep TOTAL header (K1) in strong accent */
+    thead th.score{color:var(--accent)}
+
+    /* Mobile cards view: hide table on very small screens */
+    #board{display:table;}
+    #cardsView{display:none;}
+    @media(max-width:640px){
+      #board{display:none;}
+      #cardsView{display:grid; gap:12px;}
+    }
+    .card{
+      background:var(--card); border-radius:10px; padding:14px; box-shadow:0 4px 10px rgba(0,0,0,0.25);
+    }
+    .card h3{margin:0 0 6px 0; font-size:1rem; color:var(--accent)}
+    .card .total{font-weight:700; font-size:1.1rem; color:var(--accent); margin-bottom:6px}
+    .card .values{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; font-size:0.85rem; color:var(--accent-2)}
+    .card .values span{background:#2f2f38; padding:4px 8px; border-radius:6px}
+
+    /* Accordion Rules */
+    .rules{margin-top:20px}
+    .rules-toggle{
+      width:100%; background:var(--card); color:var(--accent); border:none; border-radius:8px;
+      padding:12px 16px; font-size:1rem; font-weight:600; text-align:left; cursor:pointer; transition:background .3s ease;
+    }
+    .rules-toggle:hover{background:#40404a}
+    .rules-content{
+      max-height:0; overflow:hidden; background:#2f2f38; border-left:4px solid var(--accent);
+      border-radius:0 0 8px 8px; margin-top:4px; padding:0 16px; line-height:1.5; color:var(--muted); font-size:0.95rem;
+      transition:max-height .4s ease, padding .3s ease;
+    }
+    .rules-content.open{max-height:600px; padding:16px}
+    .rules-content ul{margin:6px 0 12px 18px; padding:0}
+    .rules-content li{margin-bottom:6px}
+    .rules-content .fish{color:var(--accent-light); font-weight:600}
+    .rules-content .mult{color:var(--accent); font-weight:700}
+
+    /* Records */
+    .records{margin:28px auto}
+    .records h2{font-size:1.2rem; font-weight:600; color:var(--accent); margin-bottom:16px}
+    .record-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px}
+    .record-card{background:var(--card); border-radius:10px; padding:16px; display:flex; align-items:center; box-shadow:0 4px 12px rgba(0,0,0,0.25); transition:transform .25s ease}
+    .record-card:hover{transform:translateY(-4px)}
+    .fish-icon{width:60px; height:auto; margin-right:14px;
+      filter: brightness(0) saturate(100%) invert(86%) sepia(18%) saturate(500%) hue-rotate(120deg) brightness(95%);
+    }
+    .record-info h3{margin:0; font-size:1rem; font-weight:600; color:var(--accent)}
+    .record-info .length{font-weight:700; font-size:1.05rem; margin-left:4px; color:var(--accent-light)}
+    .record-info p{margin:2px 0 0 0; font-size:0.85rem; color:var(--muted)}
+
+    /* Catch form */
+    .catch-form{
+      margin:40px auto; max-width:900px; background:var(--card); border-radius:12px; padding:20px; box-shadow:0 4px 14px rgba(0,0,0,0.25);
+    }
+    .catch-form h2{margin-top:0; color:var(--accent); font-size:1.2rem}
+    .fish-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin-bottom:20px}
+    .fish-card{background:#2f2f38; border-radius:8px; padding:14px; display:flex; flex-direction:column; gap:10px}
+    .fish-card h3{margin:0; font-size:1rem; color:var(--accent); display:flex; justify-content:space-between; align-items:center}
+    .fish-card label{font-size:0.85rem; color:var(--muted)}
+
+    /* Dropdown as card input */
+   .fish-card select {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: linear-gradient(145deg, #2f2f38, #363646);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1rem;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%239be2d4' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px;
+  transition: all .25s ease;
+}
+.fish-card select:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(155,226,212,0.15);
+}
+
+
+    /* Sliders */
+    input[type=range]{width:100%; margin:8px 0; accent-color:var(--accent); cursor:pointer}
+    .fish-value{font-weight:600; font-size:0.9rem; color:var(--accent); margin-left:6px}
+
+    /* Submit */
+    .submit-btn{
+      background:var(--accent); color:#292830; border:none; border-radius:8px; padding:12px 18px;
+      font-size:1rem; font-weight:600; cursor:pointer; transition:background .3s ease; width:100%;
+    }
+    .submit-btn:hover{background:var(--accent-light)}
+
+    /* Toasts */
+    #toast{position:fixed; right:20px; bottom:20px; display:flex; flex-direction:column; gap:10px; z-index:9999}
+    .toast{
+      min-width:240px; background:var(--card); color:var(--accent); border-left:4px solid var(--accent);
+      padding:10px 12px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.35);
+      animation:fadeInUp .25s ease both;
+    }
+    .toast.error{border-left-color:#ef4444; color:#fee2e2}
+    .toast.success{border-left-color:#34d399}
+    @keyframes fadeInUp{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+    /* Teilnehmer-Karte separat absetzen */
+.catch-form > .fish-card {
+  margin-bottom: 20px;
+}
+    /* Teilnehmer-Karte extra absetzen */
+.participant-card {
+  margin-bottom: 24px;
+}
+
+
+  
+    
+  </style>
+</head>
+<body>
+
+  <!-- Banner (same width as content) -->
+  <div class="container">
+    <img src="Header Banner.png" alt="Header Banner" class="banner">
+  </div>
+
+  <div class="container">
+    <!-- Leaderboard -->
+    <div class="leaderboard" aria-live="polite">
+      <header class="top">
+        <h1>Live Ranking</h1>
+        <div class="meta" id="lastUpdated">—</div>
+      </header>
+
+      <div id="error" role="alert"></div>
+
+      <table id="board" role="table" aria-label="Live ranking table">
+        <thead><tr id="headerRow"></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <!-- Mobile cards view -->
+      <div class="cards" id="cardsView"></div>
+
+      <!-- Accordion: Regeln -->
+      <div class="rules">
+        <button class="rules-toggle" onclick="toggleRules()">ℹ️ Wertung & Regeln anzeigen</button>
+        <div class="rules-content" id="rulesContent">
+          <p>Für ein vollständiges Scoreboard benötigen die Teilnehmer:</p>
+          <ul>
+            <li><span class="fish">1 Barsch</span>, <span class="fish">1 Zander</span>, <span class="fish">1 Hecht</span></li>
+            <li>+ <strong>5 weitere Fische</strong> (Barsch, Zander, Hecht, Rapfen oder Wels)</li>
+          </ul>
+          <p><strong>Multiplikatoren:</strong></p>
+          <ul class="multipliers">
+            <li>Barsch <span class="mult">×2.0</span></li>
+            <li>Zander <span class="mult">×1.3</span></li>
+            <li>Hecht <span class="mult">×1.0</span></li>
+            <li>Rapfen <span class="mult">×1.3</span></li>
+            <li>Wels <span class="mult">×0.6</span></li>
+          </ul>
+          <p><strong>Hausboot-Bonus:</strong></p>
+          <ul>
+            <li>Vom Hausboot gefangene Fische erhalten ×1.2</li>
+            <li>Beim Ansitzangeln (inaktiv) gefangene Fische erhalten keinen Hausboot Bonus </li>
+            <li>Mindestens einer der 8 zählenden Fische muss vom Hausboot gefangen sein</li>
+            <li>Fehlt ein Hausboot-Fisch, bleibt das 8. Feld leer</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Records -->
+    <div class="records">
+      <h2>Rekordfische</h2>
+      <div class="record-grid">
+        <div class="record-card">
+          <img src="barsch.png" alt="Barsch" class="fish-icon">
+          <div class="record-info">
+            <h3>Barsch <span class="length">42 cm</span></h3>
+            <p>2024 · Philip</p>
+          </div>
+        </div>
+        <div class="record-card">
+          <img src="zander.png" alt="Zander" class="fish-icon">
+          <div class="record-info">
+            <h3>Zander <span class="length">83 cm</span></h3>
+            <p>2024 · Arne</p>
+          </div>
+        </div>
+        <div class="record-card">
+          <img src="hecht.png" alt="Hecht" class="fish-icon">
+          <div class="record-info">
+            <h3>Hecht <span class="length">83 cm</span></h3>
+            <p>2024 · Tobi</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catch Form -->
+    <div class="catch-form">
+  <h2>Fänge eintragen</h2>
+  <form id="catchForm">
+    
+    <!-- Teilnehmer-Auswahl (NICHT in fish-grid!) -->
+    <div class="fish-card participant-card">
+      <h3>Teilnehmer</h3>
+      <select name="name" required>
+        <option value="">Bitte wählen…</option>
+        <option value="Arne">Arne</option>
+        <option value="Tobi">Tobi</option>
+        <option value="Philip">Philip</option>
+      </select>
+    </div>
+
+    <!-- Fischarten (Grid) -->
+    <div class="fish-grid">
+      <!-- Barsch -->
+      <div class="fish-card">
+        <h3>Barsch <span class="fish-value" id="val-barsch">22 cm</span></h3>
+        <input type="range" name="barsch" min="22" max="100" value="22"
+          oninput="document.getElementById('val-barsch').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="barschBoot"> vom Hausboot</label>
+      </div>
+
+      <!-- Zander -->
+      <div class="fish-card">
+        <h3>Zander <span class="fish-value" id="val-zander">42 cm</span></h3>
+        <input type="range" name="zander" min="42" max="120" value="42"
+          oninput="document.getElementById('val-zander').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="zanderBoot"> vom Hausboot</label>
+      </div>
+
+      <!-- Hecht -->
+      <div class="fish-card">
+        <h3>Hecht <span class="fish-value" id="val-hecht">45 cm</span></h3>
+        <input type="range" name="hecht" min="45" max="150" value="45"
+          oninput="document.getElementById('val-hecht').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="hechtBoot"> vom Hausboot</label>
+      </div>
+
+      <!-- Rapfen -->
+      <div class="fish-card">
+        <h3>Rapfen <span class="fish-value" id="val-rapfen">40 cm</span></h3>
+        <input type="range" name="rapfen" min="40" max="100" value="40"
+          oninput="document.getElementById('val-rapfen').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="rapfenBoot"> vom Hausboot</label>
+      </div>
+
+      <!-- Wels -->
+      <div class="fish-card">
+        <h3>Wels <span class="fish-value" id="val-wels">50 cm</span></h3>
+        <input type="range" name="wels" min="50" max="200" value="50"
+          oninput="document.getElementById('val-wels').textContent=this.value+' cm'">
+        <label><input type="checkbox" name="welsBoot"> vom Hausboot</label>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Absenden</button>
+  </form>
+</div>
+
+
+  <!-- Toast container -->
+  <div id="toast"></div>
+
+<script>
+/* ====== CONFIG ====== */
+const SHEET_ID = "1H7pI6CWOnP6QedIxfdFLRO_8DkswdLTc7v5rSu0TvNA";
+const API_KEY  = "AIzaSyBGFkhdQZ3le5u_dI-fsmDMoD1VMPkQXEE";
+const RANGE    = "Live!B1:K100";
+const POLL_MS  = 8000;
+const URL = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(SHEET_ID)}/values/${encodeURIComponent(RANGE)}?key=${encodeURIComponent(API_KEY)}`;
+/* ==================== */
+
+const tbody = document.querySelector('#board tbody');
+const headerRow = document.getElementById('headerRow');
+const lastUpdatedEl = document.getElementById('lastUpdated');
+const errorEl = document.getElementById('error');
+
+let rowElements = new Map();         // id (name) -> tr
+let previousOrder = [];
+let previousRanks = {};
+
+/* Toasts */
+function showToast(msg, type='info', ms=2600){
+  const wrap = document.getElementById('toast');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type==='error' ? ' error' : (type==='success' ? ' success' : ''));
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .25s'; }, ms);
+  setTimeout(()=>{ wrap.removeChild(el); }, ms+300);
+}
+
+/* Fetch helpers */
+async function fetchValues(){
+  const res = await fetch(URL, {cache:'no-store'});
+  if(!res.ok){
+    const text = await res.text().catch(()=> '');
+    throw new Error(`${res.status} ${res.statusText} ${text}`);
+  }
+  const json = await res.json();
+  return json.values || [];
+}
+
+/* Timestamp */
+function setLastUpdated(){
+  try{
+    const now = new Date();
+    lastUpdatedEl.textContent = "Letzte Aktualisierung: " +
+      now.toLocaleString('de-DE',{timeZone:'Europe/Berlin',hour12:false});
+  }catch(e){
+    lastUpdatedEl.textContent = "Letzte Aktualisierung: " + new Date().toISOString();
+  }
+}
+
+/* Safe text setter */
+function setTxt(el, v){ if(el) el.textContent = (v ?? ''); }
+
+/* Build header (B1..K1) */
+function renderHeader(header){
+  headerRow.innerHTML = '';
+  const thPos = document.createElement('th'); thPos.className='pos'; thPos.textContent='#'; headerRow.appendChild(thPos);
+
+  // Name (B1)
+  const thName = document.createElement('th'); thName.className='competitor'; thName.textContent = header[0] || 'Name'; headerRow.appendChild(thName);
+
+  // Categories C1..J1
+  for(let i=1;i<=8;i++){
+    const th = document.createElement('th'); th.className='value'; th.textContent = header[i] || ''; headerRow.appendChild(th);
+  }
+  // Total (K1)
+  const thTotal = document.createElement('th'); thTotal.className='score'; thTotal.textContent = header[9] || 'Total'; headerRow.appendChild(thTotal);
+}
+
+/* Row builders */
+function createRow(id, arr){
+  const tr = document.createElement('tr');
+  tr.dataset.id = id;
+
+  const tdPos = document.createElement('td'); tdPos.className='pos'; tr.appendChild(tdPos);
+  const tdName= document.createElement('td'); tdName.className='competitor'; setTxt(tdName, arr[0]); tr.appendChild(tdName);
+  for(let i=1;i<=8;i++){ const td=document.createElement('td'); td.className='value'; setTxt(td, arr[i]); tr.appendChild(td); }
+  const tdTotal = document.createElement('td'); tdTotal.className='score'; setTxt(tdTotal, arr[9]); tr.appendChild(tdTotal);
+  return tr;
+}
+function updateRow(tr, arr){
+  const c = tr.children;
+  setTxt(c[1], arr[0]);
+  for(let i=1;i<=8;i++){ setTxt(c[1+i], arr[i]); }
+  setTxt(c[c.length-1], arr[9]);
+}
+
+/* FLIP-ish render */
+function renderTable(header, rows){
+  renderHeader(header);
+
+  // sort by total descending (index 9)
+  rows.sort((a,b)=> Number(b[9]||0) - Number(a[9]||0));
+
+  const newOrder = rows.map((r,i)=> (r[0] && r[0].toString().trim()) ? r[0].toString().trim() : `__row_${i}`);
+  const rowsById = {}; rows.forEach((r,i)=> rowsById[newOrder[i]] = r);
+
+  // measure first positions
+  const firstRects = new Map();
+  rowElements.forEach((el,id)=> firstRects.set(id, el.getBoundingClientRect()));
+
+  // create/move
+  newOrder.forEach((id)=>{
+    const data = rowsById[id];
+    if(rowElements.has(id)){
+      const el = rowElements.get(id);
+      updateRow(el, data);
+      tbody.appendChild(el);
+    }else{
+      const el = createRow(id, data);
+      el.style.opacity='0'; el.style.transform='translateY(-6px)';
+      tbody.appendChild(el);
+      rowElements.set(id, el);
+    }
+  });
+
+  // remove disappeared
+  previousOrder.filter(id=> !newOrder.includes(id)).forEach(id=>{
+    const el = rowElements.get(id);
+    if(el && el.parentElement){ el.parentElement.removeChild(el); }
+    rowElements.delete(id);
+  });
+
+  // measure last positions
+  const lastRects = new Map();
+  rowElements.forEach((el,id)=> lastRects.set(id, el.getBoundingClientRect()));
+
+  // animate
+  rowElements.forEach((el,id)=>{
+    const first = firstRects.get(id);
+    const last = lastRects.get(id);
+    el.style.transition = 'none';
+    if(first){
+      const dy = first.top - last.top;
+      if(Math.abs(dy) > 0.5){
+        el.style.transform = `translateY(${dy}px)`;
+        requestAnimationFrame(()=> {
+          el.style.transition = 'transform 600ms cubic-bezier(.2,.8,.2,1), opacity 600ms';
+          el.style.transform = 'translateY(0)'; el.style.opacity='1';
+        });
+      }else{
+        el.style.transform=''; el.style.opacity='1';
+      }
+    }else{
+      requestAnimationFrame(()=> {
+        el.style.transition = 'transform 600ms cubic-bezier(.2,.8,.2,1), opacity 600ms';
+        el.style.transform = 'translateY(0)'; el.style.opacity='1';
+      });
+    }
+  });
+
+  // update pos cells, classes and ranks
+  const newRanks = {};
+  newOrder.forEach((id, idx)=>{
+    newRanks[id] = idx+1;
+    const el = rowElements.get(id);
+    if(!el) return;
+    const posCell = el.querySelector('.pos'); if(posCell) posCell.textContent = idx+1;
+    el.classList.remove('rank-up','rank-down','top1','top2','top3');
+    if(idx===0) el.classList.add('top1');
+    if(idx===1) el.classList.add('top2');
+    if(idx===2) el.classList.add('top3');
+
+    const old = previousRanks[id];
+    if(old && old !== (idx+1)){
+      if(old > (idx+1)){ el.classList.add('rank-up'); setTimeout(()=> el.classList.remove('rank-up'), 1200); }
+      else { el.classList.add('rank-down'); setTimeout(()=> el.classList.remove('rank-down'), 1200); }
+    }
+  });
+
+  previousOrder = newOrder.slice();
+  previousRanks = Object.assign({}, newRanks);
+}
+
+/* Mobile cards render */
+function renderCards(header, rows){
+  const container = document.getElementById('cardsView');
+  if(!container) return;
+  container.innerHTML = '';
+
+  rows.forEach((row, idx)=>{
+    const name = row[0] || '';
+    const total = row[9] || '';
+    const values = row.slice(1,9);
+    const card = document.createElement('div'); card.className='card';
+    const h = document.createElement('h3'); h.textContent = `#${idx+1} ${name}`; card.appendChild(h);
+    const t = document.createElement('div'); t.className='total'; t.textContent = `Total: ${total}`; card.appendChild(t);
+    const vs = document.createElement('div'); vs.className='values';
+    values.forEach((v,i)=> {
+      const s = document.createElement('span');
+      s.textContent = `${header[i+1] || ''}: ${v || '-'}`;
+      vs.appendChild(s);
+    });
+    card.appendChild(vs);
+    container.appendChild(card);
+  });
+}
+
+/* Refresh loop */
+let isRefreshing = false;
+async function refresh(){
+  if(isRefreshing) return;
+  isRefreshing = true;
+  errorEl.style.display = 'none';
+  try{
+    const values = await fetchValues(); // B1..K
+    if(!values || values.length <= 1) throw new Error('Keine Daten im Live-Sheet gefunden.');
+    const header = values[0];
+    const rows = values.slice(1).filter(r => r[0]); // require name
+    // sort once here for cards too
+    rows.sort((a,b)=> Number(b[9]||0) - Number(a[9]||0));
+
+    renderTable(header, rows);
+    renderCards(header, rows);
+    setLastUpdated();
+  }catch(err){
+    console.error(err);
+    errorEl.style.display = 'block';
+    errorEl.textContent = 'Fehler beim Laden der Live-Daten.';
+    showToast('Fehler beim Laden der Live-Daten', 'error');
+  }finally{
+    isRefreshing = false;
+  }
+}
+
+/* Rules toggle */
+function toggleRules(){
+  const el = document.getElementById('rulesContent');
+  el.classList.toggle('open');
+}
+
+/* Initial + poll */
+refresh();
+setInterval(refresh, POLL_MS);
+
+/* ====== CATCH FORM (to Apps Script) ====== */
+document.getElementById('catchForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const data = new FormData(e.target);
+  const obj = Object.fromEntries(data.entries());
+
+  // Slider-Werte auf "" setzen, wenn 0
+  ['barsch','zander','hecht','rapfen','wels'].forEach(k=>{
+    if(obj[k] === '0') obj[k] = '';
+  });
+
+  // Checkbox-Werte auf "true"/"" mappen
+  ['barschBoot','zanderBoot','hechtBoot','rapfenBoot','welsBoot'].forEach(k=>{
+    obj[k] = obj[k] ? "true" : "";
+  });
+
+  try{
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxke3u90ayDokvxj5Da3SnMPpTuipfHAM2sOvIGMLr85XBw_hd9GYbj2evG6U-tyzTAag/exec", {
+      method: "POST",
+      body: JSON.stringify(obj),
+      headers: { "Content-Type": "application/json" }
+    });
+    const msg = await res.text();
+    showToast(msg || 'Erfolgreich eingetragen', 'success');
+
+    e.target.reset();
+    document.querySelectorAll(".fish-value").forEach(el => el.textContent = "0 cm");
+  }catch(err){
+    console.error(err);
+    showToast('Fehler beim Senden der Daten', 'error');
+  }
+});
+
+</script>
+</body>
+</html>
