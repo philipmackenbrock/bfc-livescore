@@ -153,7 +153,24 @@
   cursor: pointer;
 }
 
-  /* Toast Container */
+/* Name-Spalte bekommt mehr Platz */
+#board th:nth-child(2),
+#board td:nth-child(2) {
+  min-width: 120px;   /* mehr Breite für Namen */
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Total-Spalte etwas schmaler */
+#board th:last-child,
+#board td:last-child {
+  width: 80px;
+  text-align: right;
+}
+    
+/* Toast Container */
 #toast-container {
   position: fixed;
   top: 20px;
@@ -190,6 +207,7 @@
 .toast.error {
   background: #e74c3c;
 }
+
 
     
   </style>
@@ -598,7 +616,7 @@ function showToast(message, type="success") {
   
 </script>
 
-    <div id="toast-container"></div>
+   <div id="toast-container"></div>
 
 </body>
 </html>
